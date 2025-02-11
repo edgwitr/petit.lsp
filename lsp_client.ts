@@ -3,7 +3,6 @@ const encoder = new TextEncoder();
 const decoder = new TextDecoder();
 
 // ★ サーバープロセスの起動 ★
-// clangd のパスは適宜変更してください。
 const cmd = new Deno.Command("C:\\Users\\yseki.DKR\\Downloads\\clangd-windows-19.1.2\\clangd_19.1.2\\bin\\clangd.exe", {
   args: [],
   stdin: "piped",
