@@ -5,12 +5,22 @@ import * as mod from "jsr:@denops/std/option";
 import { LspClient } from "./client.ts";
 import * as clangd from "./lang/clangd.ts";
 import * as Path from "jsr:@std/path";
+import { debounce } from "./debounce.ts";
 
 const clients: Record<string, LspClient> = {};
+// 入力イベントがあるたびに呼び出されるが、500ms 間隔で最後の入力のみ実行される
+const onChange = (value: string) => {
+  console.log('latest :', value);
+};
+const debouncedOnChange = debounce(onChange, 500);
 
 export const main: Entrypoint = async (denops: Denops) => {
 
   denops.dispatcher = {
+    async LSP() {
+      const line = await fn.getline(denops, ".");
+      debouncedOnChange(line);
+    },
     async lspStart(): Promise<void> {
       const [bufnr, filetype] = [await fn.bufnr(denops), await mod.filetype.get(denops)];
       console.debug("called lspStart", bufnr);
